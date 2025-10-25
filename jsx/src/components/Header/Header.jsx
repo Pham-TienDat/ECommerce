@@ -6,7 +6,9 @@ export default function Header(){
     return(
     <div className="box">
     <header>
-    <img src={logo} className="logoS"/>
+      <a href="/">
+         <img src={logo} className="logoS"/>
+      </a>
     </header> 
     <SearchBar/>
     </div>
