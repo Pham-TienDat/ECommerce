@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import kinhLup from "../../assets/kinhLup.png";
+import kinhLup from "../../../assets/kinhLup.png";
 const SearchBar = ({onSearch})=>{
     const [query,setQuery]=useState("");
     const handleChange=(e)=>{

@@ -1,4 +1,4 @@
-import logo from '../../assets/logo.jpg'
+import logo from '../../../assets/logo.jpg'
 import React from 'react'
 import "./Header.css"
 import SearchBar from './SearchBar'

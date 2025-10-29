@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express')
 const app = express()
 const mysql = require('mysql2/promise');
+const cors = require('cors');
 const port = 3000
 
 //Kết nối tới cơ sở dữ liệu
@@ -11,6 +12,11 @@ const pool = mysql.createPool({
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME
 });
+
+app.use(cors({
+  origin: 'http://localhost:5173',
+  credentials: true
+}));
 
 app.get('/', async (req, res) => {
   try {
@@ -31,6 +37,14 @@ app.get('/users', async (req, res) => {
   }
 });
 
+app.get('/categories', async (req, res) => {
+  try {
+    const [rows] = await pool.execute('SELECT * FROM categories');
+    res.json({ ok: true, categories: rows });
+  } catch (err) {
+    res.status(500).json({ ok: false, error: err.message });
+  }
+});
 
 app.listen(process.env.PORT, () => {
   console.log(`✅ Server đang chạy tại http://localhost:${process.env.PORT}`);

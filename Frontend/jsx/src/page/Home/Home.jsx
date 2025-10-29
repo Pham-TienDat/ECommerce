@@ -1,7 +1,7 @@
-import Header from '../components/Header/Header'
-import Ads from '../components/Ads/Ads'
-import Categories from '../components/Categories/Categories'
-import FlashSale from '../components/FlashSale/FlashSale'
+import Header from './Header/Header'
+import Ads from './Ads/Ads'
+import Categories from './Categories/Categories'
+import FlashSale from './FlashSale/FlashSale'
 import { Link } from "react-router-dom";
 function Home() {
   return (

@@ -1,4 +1,4 @@
-import Home from './page/Home'
+import Home from './page/Home/Home'
 import Login from './page/Login'
 import SignUp from './page/SignUp'
 import { Routes, Route } from "react-router-dom";
