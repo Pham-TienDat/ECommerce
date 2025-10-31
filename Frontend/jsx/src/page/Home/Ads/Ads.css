@@ -10,7 +10,7 @@
     background-color: yellow;
 }
 .ads{
-    width:100%;
+    width:100vw;
     height: 300px;
     display: flex;
     justify-content: center;

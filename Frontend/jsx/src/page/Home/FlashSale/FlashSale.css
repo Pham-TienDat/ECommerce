@@ -7,7 +7,7 @@
   grid-template-rows: repeat(1, 200px);
   grid-auto-flow: column;
   grid-auto-columns: 180px;
-  width: 100%;
+  width: 100vw;
   overflow-x: auto;
   overflow-y: hidden;
   scroll-behavior: smoot;

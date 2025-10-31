@@ -3,7 +3,7 @@
   grid-template-rows: repeat(2, 150px);
   grid-auto-flow: column;
   grid-auto-columns: 120px;
-  width: 100%;
+  width: 100vw;
   overflow-x: auto;
   overflow-y: hidden;
   scroll-behavior: smooth;

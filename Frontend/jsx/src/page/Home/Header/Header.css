@@ -2,15 +2,12 @@
   width: 120px;
   height: auto;  
   position: absolute;
-  top: 10%;
-  left: 4%;
 }
 .box {
   position: relative;
-  width: 100%;
+  width: 100vw;
   height: 150px;
   background-color: rgb(111, 187, 126);
-  position: relative;
 }
 .search{
   position: absolute;
@@ -46,4 +43,9 @@
   display: block; 
   width:35px;
   height:35px;
+}
+.loginSignup{
+  position:absolute;
+  top:0px;
+  right:30px;
 }

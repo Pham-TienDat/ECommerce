@@ -12,7 +12,7 @@ const pool = mysql.createPool({
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME
 });
-
+app.use(express.json());
 app.use(cors({
   origin: 'http://localhost:5173',
   credentials: true
@@ -45,6 +45,20 @@ app.get('/categories', async (req, res) => {
     res.status(500).json({ ok: false, error: err.message });
   }
 });
+
+app.post('/login', async(req, res) => {
+  const { username, password } = req.body; // Lấy dữ liệu gửi lên
+  const [rows] = await pool.execute('SELECT username, password FROM users WHERE username = ?', [username]);
+  if (rows.length === 0) {
+      return res.status(401).json({ message: 'Invalid credentials' });
+    }
+  const user = rows[0];
+  if(password===user.password){
+    res.json({ message: "true" });
+  }
+  else res.json({ message: "false" });
+});
+
 
 app.listen(process.env.PORT, () => {
   console.log(`✅ Server đang chạy tại http://localhost:${process.env.PORT}`);
