@@ -1,11 +1,16 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useLocation} from "react-router-dom";
 import axios from 'axios';
-import { useEffect,useState } from 'react';
+import {AuthContext} from "../AuthContext";
+import {useState, useContext } from 'react';
 
 export default function Login(){
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [result, setResult] = useState("");
+    const location = useLocation();
+    const from = location.state?.from || "/";
+    const { setUser } = useContext(AuthContext);
+    const navigate = useNavigate();
     const handleSubmit = async (e) => {
         e.preventDefault();
       const res = await axios.post(
@@ -14,19 +19,12 @@ export default function Login(){
         { headers: { "Content-Type": "application/json" } }
       );
       if(res.data.message==="true"){
-        setResult("Đăng nhập thành công");
-        setUsername("");
-        setPassword("");
+        setUser(username);
+        localStorage.setItem("username",JSON.stringify(username));
+        navigate(from, { replace: true });
       }
       else setResult("Sai tài khoản hoặc mật khẩu");
     }
-    useEffect(() => {
-    axios.get('https://jsonplaceholder.typicode.com/users').then(response => {
-    console.log(response.data); // Mảng dữ liệu người dùng
-}).catch(error => {
-    console.error(error);
-});
-}, []);
     return(
         <div>
             <h3>Đăng nhập</h3>

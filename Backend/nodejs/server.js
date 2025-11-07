@@ -27,7 +27,7 @@ app.get('/', async (req, res) => {
   }
 });
 
-
+//Lấy thông tin người dùng từ cơ sở dữ liệu
 app.get('/users', async (req, res) => {
   try {
     const [rows] = await pool.execute('SELECT * FROM users');
@@ -36,7 +36,7 @@ app.get('/users', async (req, res) => {
     res.status(500).json({ ok: false, error: err.message });
   }
 });
-
+//Lấy danh sách danh mục từ cơ sở dữ liệu
 app.get('/categories', async (req, res) => {
   try {
     const [rows] = await pool.execute('SELECT * FROM categories');
@@ -45,7 +45,16 @@ app.get('/categories', async (req, res) => {
     res.status(500).json({ ok: false, error: err.message });
   }
 });
-
+//Lấy danh sách sản phẩm từ cơ sở dữ liệu
+app.get('/products', async (req, res) => {
+  try {
+    const [rows] = await pool.execute('SELECT * FROM products');
+    res.json({ ok: true, products: rows });
+  } catch (err) {
+    res.status(500).json({ ok: false, error: err.message });
+  }
+});
+//Lấy thông tin đăng nhập từ frontend và so sánh với cơ sở dữ liệu
 app.post('/login', async(req, res) => {
   const { username, password } = req.body; // Lấy dữ liệu gửi lên
   const [rows] = await pool.execute('SELECT username, password FROM users WHERE username = ?', [username]);
@@ -58,6 +67,17 @@ app.post('/login', async(req, res) => {
   }
   else res.json({ message: "false" });
 });
+//Lấy thông tin đăng ký từ backend và ghi vào cơ sở dữ liệu
+app.post('/signup', async(req, res) => {
+  const { username, password } = req.body; // Lấy dữ liệu gửi lên
+  try{
+  const [rows] = await pool.execute('INSERT INTO users(username,password) VALUES (?,?)', [username,password])
+  res.json({ message: "true" });}
+  catch(error){
+    res.json({ message: "false" });
+  }
+});
+
 
 
 app.listen(process.env.PORT, () => {

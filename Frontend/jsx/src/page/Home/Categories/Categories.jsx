@@ -6,9 +6,7 @@ export default function Categories(){
     //Lấy dữ liệu danh mục
     useEffect(() => {
   axios.get('http://localhost:3000/categories')
-    .then(res => {setCats(res.data.categories);
-        console.log(res.data);
-    })
+    .then(res => {setCats(res.data.categories);})
     .catch(err => console.error(err));
 }, []);
     return(
