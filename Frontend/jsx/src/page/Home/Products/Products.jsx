@@ -17,7 +17,7 @@ export default function Products(){
    
         {prod.map(p => (
           <li key={p.id}>
-            <Link to={`/product/${p.id}`} className="product-card">
+            <Link to={`/product/${p.id}`} state={{ product: p }} className="product-card">
             {p.name},{p.price}
             </Link>
           </li>

@@ -4,6 +4,7 @@ const app = express()
 const mysql = require('mysql2/promise');
 const cors = require('cors');
 const port = 3000
+let uid;
 
 //Kết nối tới cơ sở dữ liệu
 const pool = mysql.createPool({
@@ -54,16 +55,26 @@ app.get('/products', async (req, res) => {
     res.status(500).json({ ok: false, error: err.message });
   }
 });
+//Lấy danh sách đơn hàng từ cơ sở dữ liệu
+app.get('/cart', async (req, res) => {
+  try {
+    const [rows] = await pool.execute('SELECT * FROM carts WHERE user_id = ?',[uid]);
+    res.json({ ok: true, cart: rows,user_id:uid });
+  } catch (err) {
+    res.status(500).json({ ok: false, error: err.message });
+  }
+});
 //Lấy thông tin đăng nhập từ frontend và so sánh với cơ sở dữ liệu
 app.post('/login', async(req, res) => {
   const { username, password } = req.body; // Lấy dữ liệu gửi lên
-  const [rows] = await pool.execute('SELECT username, password FROM users WHERE username = ?', [username]);
+  const [rows] = await pool.execute('SELECT id, username, password FROM users WHERE username = ?', [username]);
   if (rows.length === 0) {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
   const user = rows[0];
   if(password===user.password){
-    res.json({ message: "true" });
+    uid=user.id;
+    res.json({ message: "true" , user_id: user.id});
   }
   else res.json({ message: "false" });
 });
@@ -78,8 +89,17 @@ app.post('/signup', async(req, res) => {
   }
 });
 
-
-
+//Lấy thông tin thêm đơn hàng ghi vào cơ sở dữ liệu
+app.post('/cart', async(req, res) => {
+  
+  const { user_id, product_name,product_price,quantity } = req.body; // Lấy dữ liệu gửi lên
+  try{
+  const [rows] = await pool.execute('INSERT INTO carts(product_name,quantity,price,user_id) VALUES (?,?,?,?)', [product_name,quantity,product_price,user_id])
+  res.json({ message: "true" });}
+  catch(error){
+    res.json({ message: "false" });
+  }
+});
 app.listen(process.env.PORT, () => {
   console.log(`✅ Server đang chạy tại http://localhost:${process.env.PORT}`);
 });

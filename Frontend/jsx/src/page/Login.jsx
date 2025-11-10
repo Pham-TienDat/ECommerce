@@ -20,7 +20,9 @@ export default function Login(){
       );
       if(res.data.message==="true"){
         setUser(username);
+        localStorage.setItem("user_id",JSON.stringify(res.data.user_id));
         localStorage.setItem("username",JSON.stringify(username));
+        console.log(localStorage);
         navigate(from, { replace: true });
       }
       else setResult("Sai tài khoản hoặc mật khẩu");
