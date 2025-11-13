@@ -103,3 +103,14 @@ app.post('/cart', async(req, res) => {
 app.listen(process.env.PORT, () => {
   console.log(`✅ Server đang chạy tại http://localhost:${process.env.PORT}`);
 });
+//Xóa tất cả sản phẩm trong giỏ hàng
+app.delete('/cart/all', (req, res) => {
+  const result = pool.execute('DELETE FROM carts WHERE user_id = ?', [uid]);
+  res.json({ message: 'Xóa thành công' });
+});
+//Xóa sản phẩm cụ thể trong giỏ hàng
+app.delete('/cart/:id', (req, res) => {
+  const cartId = req.params.id;
+  const result = pool.execute('DELETE FROM carts WHERE id = ?', [cartId]);
+  res.json({ message: 'Xóa thành công' });
+});
