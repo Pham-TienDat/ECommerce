@@ -114,3 +114,34 @@ app.delete('/cart/:id', (req, res) => {
   const result = pool.execute('DELETE FROM carts WHERE id = ?', [cartId]);
   res.json({ message: 'Xóa thành công' });
 });
+//Lấy thông tin tìm kiếm từ cơ sở dữ liệu
+app.post('/search', async (req, res) => {
+  try {
+    const search = req.body.search;
+    const [rows] = await pool.execute(
+      `SELECT * FROM products 
+       WHERE name LIKE CONCAT('%', ?, '%') 
+       LIMIT 50`,
+      [search]
+    );
+
+    res.json({ ok: true, products: rows });
+
+  } catch (err) {
+    res.status(500).json({ ok: false, error: err.message });
+  }
+});
+//Lấy id giỏ hàng được chọn và trả về các sản phẩm tương ứng
+app.post('/cats', async (req, res) => {
+  try {
+    const id = req.body.categories_id;
+    const [rows] = await pool.execute(
+      `SELECT * FROM products 
+       WHERE  categories = ?`,
+      [id]
+    );
+    res.json({ ok: true, products: rows });
+  } catch (err) {
+    res.status(500).json({ ok: false, error: err.message });
+  }
+});

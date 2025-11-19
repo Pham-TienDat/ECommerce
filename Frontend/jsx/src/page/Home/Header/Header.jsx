@@ -22,9 +22,9 @@ export default function Header(){
     return(
     <div className="box">
     <header>
-      <a href="/">
+      {/* <a href="/">
          <img src={logo} className="logoS"/>
-      </a>
+      </a> */}
     </header> 
     <SearchBar/>
     <img src={gioHang}
