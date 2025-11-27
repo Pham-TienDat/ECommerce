@@ -11,6 +11,9 @@
   },
   "dependencies": {
     "axios": "^1.12.2",
+    "bo": "^0.0.3",
+    "boostrap": "^2.0.0",
+    "bootstrap": "^5.3.8",
     "cors": "^2.8.5",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",

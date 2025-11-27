@@ -29,29 +29,36 @@ export default function SignUp(){
 
 
     return(
-         <div>
+         <div className=" vw-100 vh-100 d-flex flex-column justify-content-center align-items-center">
+         <div className=" bg-dark-subtle text-center rounded p-3" style={{ width: '400px'}}>
             <h3>Đăng ký tài khoản</h3>
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit} className=" d-flex flex-column gap-3">
             <input
               type= "text"
               placeholder="Email/Số điện thoại/Tên đăng nhập"
               value={username}
-              onChange={(e)=>setUsername(e.target.value)}/>
+              onChange={(e)=>setUsername(e.target.value)}
+              className="form-control"/>
             <input
               type= "text"
               placeholder="Mật khẩu"
               value={password}
-              onChange={(e)=>setPassword(e.target.value)}/>
+              onChange={(e)=>setPassword(e.target.value)}
+              className="form-control"/>
             <input
               type= "text"
               placeholder="Nhập lại mật khẩu"
               value={repassword}
-              onChange={(e)=>setRepassword(e.target.value)}/>
-            <button type="submit">Đăng ký</button>
+              onChange={(e)=>setRepassword(e.target.value)}
+              className="form-control"/>
+            <button type="submit" className=" btn btn-lg btn-secondary" >Đăng ký</button>
             </form>
-            <p>Đã có tài khoản?</p>
+            <div className="m-3">
+            <p className="mb-0">Đã có tài khoản?</p>
             <Link to= "/login" >Đăng Nhập</Link>
-            <p>{result}</p>
+            </div>
+        </div>
+         <p>{result}</p>
         </div>
 
     )

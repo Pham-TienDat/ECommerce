@@ -21,17 +21,15 @@ const SearchBar = ()=>{
         navigate("/search"); 
     }
     return(
-    <div className="search-container">
-     <button className="searchButton" onClick={handleClick}>
-        <img src={kinhLup} className="searchIcon"/>
-     </button>
+    <div className="d-flex">
      <input
      type= "text"
      placeholder="Tìm kiếm"
      value={query}
      onChange={handleChange}
-     className="search"
+     className="w-100"
      />
+        <img src={kinhLup} height="40" onClick={handleClick}/>
      </div>
     );
 };
