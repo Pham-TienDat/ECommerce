@@ -76,10 +76,10 @@ const handleItemSelect = (productId,cost) => {
 
     return(
     <div className="container vw-100">
-    <h1 className="p-3 fixed-top">Giỏ hàng</h1>
+    <h1 className="p-3 fixed-top bg-white">Giỏ hàng</h1>
     {cart.length==0?(<h2 className="text-center">Không có sản phẩm</h2>):(
     <div>
-    <div className="pb-5">
+    <div style={{paddingTop: '5rem',paddingBottom:"5rem"}}>
    <table className="table">
   <thead>
     <tr>
