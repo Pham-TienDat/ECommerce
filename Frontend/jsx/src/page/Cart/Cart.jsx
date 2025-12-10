@@ -72,8 +72,7 @@ const handleItemSelect = (productId,cost) => {
         })}; 
         return newSet;
     });
-};
-
+}; 
     return(
     <div className="container vw-100">
     <h1 className="p-3 fixed-top bg-white">Giỏ hàng</h1>
@@ -94,19 +93,19 @@ const handleItemSelect = (productId,cost) => {
   <tbody>
         {cart.map(p => (
           <tr key={p.id}>
-            <th scope="row"><input className="form-check-input me-1" type="checkbox" value="" checked={selectedIds.has(p.id)} onChange={()=>handleItemSelect(p.id,p.price*p.quantity)}/></th>
-            <td>{p.product_name}</td>
-            <td className="text-center">{p.price}</td>
-            <td className="text-center">{p.quantity}</td>
-            <td className="text-center">{p.price*p.quantity}</td>
-            <td><button onClick={()=>{handleDelete(p.id,p.price*p.quantity)}}>Xóa</button> </td>
+            <th scope="row"><input className=" form-check-input me-1 align-middle" type="checkbox" value="" checked={selectedIds.has(p.id)} onChange={()=>handleItemSelect(p.id,p.price*p.quantity)}/></th>
+            <td><img src={p.image} height="100"/> {p.product_name}</td>
+            <td className="text-center align-middle">{Number(p.price).toLocaleString('vi-VN')}</td>
+            <td className="text-center align-middle">{p.quantity}</td>
+            <td className="text-center align-middle">{Number(p.price*p.quantity).toLocaleString('vi-VN')}</td>
+            <td className="align-middle"><button onClick={()=>{handleDelete(p.id,p.price*p.quantity)}}>Xóa</button> </td>
           </tr>
         ))}
   </tbody>
   </table>
   </div>
     <div className="d-flex fixed-bottom bg-secondary-subtle p-4 align-items-center gap-4">
-      <div className="ms-auto fw-bold">Tổng cộng: {count/2}</div>
+      <div className="ms-auto fw-bold">Tổng cộng: {Number(count/2).toLocaleString('vi-VN')}</div>
       <button className="btn btn-secondary">Mua hàng</button>
       <button className="btn btn-secondary" onClick={handleDeleteAll}>Xóa tất cả</button>
     </div>

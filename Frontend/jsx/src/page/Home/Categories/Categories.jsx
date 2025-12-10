@@ -30,7 +30,7 @@ export default function Categories(){
           <li className=" d-flex flex-column justify-content-between border text-center" key={c.id} onClick={()=>handleClick(c.id)}>
             <div>{c.name}</div>
             <div style={{ height: '100px'}} className="d-flex align-items-center justify-content-center">
-            <img src={c.images} className="rounded-circle" height="65"/>
+            <img src={c.images} className="rounded-circle" height="100"/>
             </div>
             </li>
         ))}

@@ -17,7 +17,6 @@ const SearchBar = ()=>{
         { headers: { "Content-Type": "application/json" } }
       );
         setProducts(res.data.products);
-        console.log(res);
         navigate("/search"); 
     }
     return(

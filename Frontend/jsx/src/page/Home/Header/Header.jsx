@@ -19,6 +19,9 @@ export default function Header(){
   const handleLogout = () =>{
     localStorage.removeItem("username"); // xóa key "user"
   }
+  const handleBought = () =>{
+    navigate("/bought");
+  }
     return(
       <nav className="navbar bg-light">
         {!user?(<div className="container d-flex">

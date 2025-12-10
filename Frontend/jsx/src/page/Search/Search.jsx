@@ -18,7 +18,7 @@ export default function Search(){
             <img src={p.image} className="card-img-top" alt="..."/>
             <div className="card-body">
                 <h5 className="card-title">{p.name}</h5>
-                <div>{p.price}</div>
+                <div>{Number(p.price).toLocaleString("vi-VN")}đ</div>
             </div>
             </div>
             

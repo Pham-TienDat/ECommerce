@@ -1,12 +1,14 @@
-import {useState} from 'react';
+import {useState,useEffect} from 'react';
 import axios from 'axios';
 import {useLocation,useNavigate} from "react-router-dom";
 import Header from "../Home/Header/Header"
+import DisplayRating from "../../DisplayRating"
 export default function ProductDetail(){
     const location = useLocation();
     const product = location.state?.product;
     const user_id=localStorage.getItem("user_id");
     const [soLuong,setSoLuong] = useState(0);
+    const [rate,setRate] = useState([]);
     const navigate = useNavigate();
     const from = location.state?.from || "/cart";
     const handleGiam = () => {
@@ -22,7 +24,8 @@ export default function ProductDetail(){
         { user_id: user_id,
         product_name: product.name,
         product_price: product.price,
-        quantity: soLuong},
+        quantity: soLuong,
+        image: product.image},
         { headers: { "Content-Type": "application/json" } }
       )
       .then(res => {
@@ -30,7 +33,18 @@ export default function ProductDetail(){
   })
 }
     }
+    useEffect(() => {
+         axios.post(
+        "http://localhost:3000/ratings",
+        { product_id: product.id },
+        { headers: { "Content-Type": "application/json" } }
 
+      )
+      .then((res) => {setRate(res.data.ratings);
+      }
+)
+      
+}, [product.id]);
     return(
         <>
         <div className="fixed-top">
@@ -46,7 +60,7 @@ export default function ProductDetail(){
             <div className="col-lg-7">
             <div className="card-body">
             <h5 className="card-title fs-2 fw-bold">{product.name}</h5>
-            <p className="card-text fs-2">{product.price}đ</p>
+            <p className="card-text fs-2">{Number(product.price).toLocaleString('vi-VN')}đ</p>
             
             
             <div className="d-flex">
@@ -71,9 +85,29 @@ export default function ProductDetail(){
 
         <div className="container">
             <div className="fs-3">Đánh giá</div>
-            <div></div>
+            <div>
+                <input/>
+            </div>
+            <div>{rate.map(p=>(
+                <div key={p.id} className="border-bottom mb-1">
+                    <div>Khách hàng số {p.user_id}</div>
+                   <DisplayRating ratingValue={p.rating} />
+                    <div>{p.comment_text}</div>
+                    <div className="text-muted small">
+                    {new Date(p.created_at).toLocaleString('vi-VN', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    second: '2-digit',
+                    })}
+                </div>
+                </div>
+            )
+
+            )}</div>
         </div>
-        
         </>
     )
 }

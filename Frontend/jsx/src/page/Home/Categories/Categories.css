@@ -12,6 +12,6 @@
 }
 .categories li {
   list-style: none;
-  background-color: #ede4e4;
-  flex-shrink: 0; 
+  flex-shrink: 0;
+  background-color: #f2f2f2;
 }

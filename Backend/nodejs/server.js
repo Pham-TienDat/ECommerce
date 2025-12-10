@@ -92,9 +92,9 @@ app.post('/signup', async(req, res) => {
 //Lấy thông tin thêm đơn hàng ghi vào cơ sở dữ liệu
 app.post('/cart', async(req, res) => {
   
-  const { user_id, product_name,product_price,quantity } = req.body; // Lấy dữ liệu gửi lên
+  const { user_id, product_name,product_price,quantity,image } = req.body; // Lấy dữ liệu gửi lên
   try{
-  const [rows] = await pool.execute('INSERT INTO carts(product_name,quantity,price,user_id) VALUES (?,?,?,?)', [product_name,quantity,product_price,user_id])
+  const [rows] = await pool.execute('INSERT INTO carts(product_name,quantity,price,user_id,image) VALUES (?,?,?,?,?)', [product_name,quantity,product_price,user_id,image])
   res.json({ message: "true" });}
   catch(error){
     res.json({ message: "false" });
@@ -141,6 +141,20 @@ app.post('/cats', async (req, res) => {
       [id]
     );
     res.json({ ok: true, products: rows });
+  } catch (err) {
+    res.status(500).json({ ok: false, error: err.message });
+  }
+});
+//Lấy id sản phẩm rồi trả về đánh giá
+app.post('/ratings', async (req, res) => {
+  try {
+    const id = req.body.product_id;
+    const [rows] = await pool.execute(
+      `SELECT * FROM ratings 
+       WHERE  product_id = ?`,
+      [id]
+    );
+    res.json({ ok: true, ratings: rows });
   } catch (err) {
     res.status(500).json({ ok: false, error: err.message });
   }

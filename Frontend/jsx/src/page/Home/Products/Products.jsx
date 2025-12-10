@@ -13,17 +13,23 @@ export default function Products(){
     return(
     <div>
     <h2>Danh sách sản phẩm</h2>
-    <ul className="products">
-   
+    <div className="container-fluid">
+        <div className="row row-cols-2 row-cols-sm-3 row-cols-md-4 row-cols-lg-5 g-4">
         {prod.map(p => (
-          <li key={p.id}>
-            <Link to={`/product/${p.id}`} state={{ product: p }} className="product-card">
-            {p.name},{p.price}
-            </Link>
-          </li>
+          <Link to={`/product/${p.id}`} state={{ product: p }} key={p.id} className='col text-decoration-none' >
+            <div className="card h-100">
+            <img src={p.image} className="card-img-top" alt="..."/>
+            <div className="card-body">
+                <h5 className="card-title">{p.name}</h5>
+                <div>{Number(p.price).toLocaleString('vi-VN')}đ</div>
+            </div>
+            </div>
+            
+          </Link>
         ))}
       
-    </ul>
+      </div>
+      </div>
     </div>
     )
 }
