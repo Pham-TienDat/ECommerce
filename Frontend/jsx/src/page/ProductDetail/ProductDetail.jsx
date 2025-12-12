@@ -3,6 +3,7 @@ import axios from 'axios';
 import {useLocation,useNavigate} from "react-router-dom";
 import Header from "../Home/Header/Header"
 import DisplayRating from "../../DisplayRating"
+import ProductReviewForm from '../../components/ProductReviewForm';
 export default function ProductDetail(){
     const location = useLocation();
     const product = location.state?.product;
@@ -85,9 +86,7 @@ export default function ProductDetail(){
 
         <div className="container">
             <div className="fs-3">Đánh giá</div>
-            <div>
-                <input/>
-            </div>
+            <div className="pb-4"><ProductReviewForm productId={product.id} userId={user_id}/></div>
             <div>{rate.map(p=>(
                 <div key={p.id} className="border-bottom mb-1">
                     <div>Khách hàng số {p.user_id}</div>

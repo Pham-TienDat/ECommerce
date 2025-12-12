@@ -159,3 +159,15 @@ app.post('/ratings', async (req, res) => {
     res.status(500).json({ ok: false, error: err.message });
   }
 });
+
+//Ghi đánh giá vào cơ sở dữ liệu
+
+app.post('/rating', async (req, res) => {
+  const { productId,userId,rating, comment } = req.body; // Lấy dữ liệu gửi lên
+  try{
+  const [rows] = await pool.execute('INSERT INTO ratings(product_id,user_id,comment_text,rating) VALUES (?,?,?,?)', [productId,userId,comment,rating])
+  res.json({ message: "true" });}
+  catch(error){
+    res.json({ message: "false" });
+  }
+});
