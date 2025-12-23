@@ -1,6 +1,9 @@
 import '../FlashSale/FlashSale.css'
+import axios from 'axios';
 import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 export default function FlashSale(){
+    const [fls, setFls] = useState([]);
      let gio;
      let phut;
      let giay;
@@ -17,9 +20,18 @@ export default function FlashSale(){
         },1000);
         return ()=>clearInterval(timer);
     },[timeRemaining]);
+
+    useEffect(() => {
+    axios.get('http://localhost:3000/flashsale')
+    .then(res => {setFls(res.data.flashsale);
+        console.log(res.data.flashsale);
+    })
+    .catch(err => console.error(err));
+    }, []);
     gio=Math.floor(timeRemaining/3600000);
     phut=Math.floor((timeRemaining-gio*3600000)/60000);
     giay=Math.floor((timeRemaining-gio*3600000-phut*60000)/1000);
+    
     return(
     <>
     <div className="header">
@@ -32,33 +44,14 @@ export default function FlashSale(){
          </div>
     </div>
     <ul className="flashSale">
-   <li >abc</li>
-   <li >abc</li>
-   <li >abc</li>
-   <li >abc</li>
-   <li >abc</li>
-   <li >abc</li>
-   <li >abc</li>
-   <li >abc</li>
-   <li >abc</li>
-   <li >abc</li>
-   <li >abc</li>
-   <li >abc</li>
-   <li >abc</li>
-   <li >abc</li>
-   <li >abc</li>
-   <li >abc</li>
-   <li >abc</li>
-   <li >abc</li>
-   <li >abc</li>
-   <li >abc</li>
-   <li >abc</li>
-   <li >abc</li>
-   <li >abc</li>
-   <li >abc</li>
-   <li >abc</li>
-   <li >abc</li>
-   <li >abc</li>
+        {fls.map(p=>(
+            <li>
+                <div className="discount">-{p.discount}%</div>
+                <img src={p.image} className="card-img-top" alt="..."/>
+                <div className="text-center">{Number(p.price).toLocaleString('vi-VN')}đ</div>
+            </li>
+        ))}
+
     </ul>
     </>);
 }

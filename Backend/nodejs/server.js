@@ -161,7 +161,6 @@ app.post('/ratings', async (req, res) => {
 });
 
 //Ghi đánh giá vào cơ sở dữ liệu
-
 app.post('/rating', async (req, res) => {
   const { productId,userId,rating, comment } = req.body; // Lấy dữ liệu gửi lên
   try{
@@ -169,5 +168,15 @@ app.post('/rating', async (req, res) => {
   res.json({ message: "true" });}
   catch(error){
     res.json({ message: "false" });
+  }
+});
+//Thông tin sản phẩm đang được giảm giá
+app.get('/flashsale', async (req, res) => {
+  try {
+    const [rows] = await pool.execute(
+      'SELECT products.*,flashsale.discount FROM flashsale INNER JOIN products ON flashsale.product_id = products.id');
+    res.json({ ok: true, flashsale: rows });
+  } catch (err) {
+    res.status(500).json({ ok: false, error: err.message });
   }
 });
