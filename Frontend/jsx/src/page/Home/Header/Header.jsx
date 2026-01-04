@@ -36,7 +36,7 @@ export default function Header(){
           </div>)}
          
         <div className="container d-flex justify-content-between align-items-center">
-          <a class="navbar-brand" href="#">
+          <a class="navbar-brand" href="/">
             <div className="h1">Home</div>
           </a>
           <div className="w-75">

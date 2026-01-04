@@ -5,7 +5,7 @@ import kinhLup from "../../../assets/kinhLup.png";
 import {ProductContext} from "../../../ProductContext";
 const SearchBar = ()=>{
     const { setProducts } = useContext(ProductContext);
-    const [query,setQuery]=useState("");
+    const [query,setQuery] = useState("");
     const navigate = useNavigate();
     const handleChange=(e)=>{
         setQuery(e.target.value);

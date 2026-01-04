@@ -24,7 +24,6 @@ export default function FlashSale(){
     useEffect(() => {
     axios.get('http://localhost:3000/flashsale')
     .then(res => {setFls(res.data.flashsale);
-        console.log(res.data.flashsale);
     })
     .catch(err => console.error(err));
     }, []);

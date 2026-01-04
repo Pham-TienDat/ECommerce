@@ -2,7 +2,7 @@ import '../Categories/Categories.css';
 import axios from 'axios';
 import { useEffect,useState,useContext } from 'react';
 import {ProductContext} from "../../../ProductContext";
-import { useNavigate} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 export default function Categories(){
     const [cats, setCats] = useState([]);
     const { setProducts } = useContext(ProductContext);
@@ -27,12 +27,12 @@ export default function Categories(){
     <h2>Danh mục</h2>
     <ul className="categories">
         {cats.map(c => (
-          <li className=" d-flex flex-column justify-content-between border text-center" key={c.id} onClick={()=>handleClick(c.id)}>
+          <li className=" d-flex flex-column justify-content-between border text-center" key={c.id} onClick={()=>handleClick(c.id)}>      
             <div>{c.name}</div>
             <div style={{ height: '100px'}} className="d-flex align-items-center justify-content-center">
             <img src={c.images} className="rounded-circle" height="100"/>
             </div>
-            </li>
+          </li>
         ))}
     </ul>
     </div>);

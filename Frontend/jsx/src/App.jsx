@@ -15,8 +15,8 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/product/:id" element={<ProductDetail />} />
-        <Route path="/cart" element={<Cart/>} />  
-        <Route path="/search" element={<Search/>}/>
+        <Route path="/cart" element={<Cart/>} />
+        <Route path="/search" element={<Search/>} />   
       </Routes>
     </AuthProvider>
     </>

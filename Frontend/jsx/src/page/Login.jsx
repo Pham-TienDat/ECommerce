@@ -22,11 +22,11 @@ export default function Login(){
         setUser(username);
         localStorage.setItem("user_id",JSON.stringify(res.data.user_id));
         localStorage.setItem("username",JSON.stringify(username));
-        console.log(localStorage);
         navigate(from, { replace: true });
       }
       else setResult("Sai tài khoản hoặc mật khẩu");
     }
+    
     return(
         <div className=" vw-100 vh-100 d-flex flex-column justify-content-center align-items-center">
         <div className=" bg-dark-subtle text-center rounded p-3" style={{ width: '400px'}}>
