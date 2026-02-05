@@ -3,8 +3,11 @@ const express = require('express')
 const app = express()
 const mysql = require('mysql2/promise');
 const cors = require('cors');
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const auth = require("./auth");
 const port = 3000
-let uid;
+const SALT_ROUNDS = 10;
 
 //Kết nối tới cơ sở dữ liệu
 const pool = mysql.createPool({
@@ -56,10 +59,11 @@ app.get('/products', async (req, res) => {
   }
 });
 //Lấy danh sách đơn hàng từ cơ sở dữ liệu
-app.get('/cart', async (req, res) => {
+app.get('/cart',auth, async (req, res) => {
   try {
-    const [rows] = await pool.execute('SELECT * FROM carts WHERE user_id = ?',[uid]);
-    res.json({ ok: true, cart: rows,user_id:uid });
+    const userId = req.user.sub;
+    const [rows] = await pool.execute('SELECT * FROM carts WHERE user_id = ?',[userId]);
+    res.json({ ok: true, cart: rows,user_id:userId });
   } catch (err) {
     res.status(500).json({ ok: false, error: err.message });
   }
@@ -72,9 +76,17 @@ app.post('/login', async(req, res) => {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
   const user = rows[0];
-  if(password===user.password){
-    uid=user.id;
-    res.json({ message: "true" , user_id: user.id});
+  const isMatch = await bcrypt.compare(password, user.password);
+  if(isMatch){
+     // SINH JWT
+    const token = jwt.sign(
+      { sub: user.id, username: user.username },
+      process.env.JWT_SECRET,
+      { expiresIn: process.env.JWT_EXPIRE }
+    );
+    res.json({ message: "true" ,
+       accessToken: token,
+       user_id: user.id});
   }
   else res.json({ message: "false" });
 });
@@ -82,7 +94,8 @@ app.post('/login', async(req, res) => {
 app.post('/signup', async(req, res) => {
   const { username, password } = req.body; // Lấy dữ liệu gửi lên
   try{
-  const [rows] = await pool.execute('INSERT INTO users(username,password) VALUES (?,?)', [username,password])
+  const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
+  const [rows] = await pool.execute('INSERT INTO users(username,password) VALUES (?,?)', [username,passwordHash])
   res.json({ message: "true" });}
   catch(error){
     res.json({ message: "false" });
@@ -90,28 +103,42 @@ app.post('/signup', async(req, res) => {
 });
 
 //Lấy thông tin thêm đơn hàng ghi vào cơ sở dữ liệu
-app.post('/cart', async(req, res) => {
-  
-  const { user_id, product_name,product_price,quantity,image } = req.body; // Lấy dữ liệu gửi lên
-  try{
-  const [rows] = await pool.execute('INSERT INTO carts(product_name,quantity,price,user_id,image) VALUES (?,?,?,?,?)', [product_name,quantity,product_price,user_id,image])
-  res.json({ message: "true" });}
-  catch(error){
-    res.json({ message: "false" });
+app.post('/cart', auth, async (req, res) => {
+  try {
+    const userId = req.user.sub;
+    const { product_name, product_price, quantity, image } = req.body;
+
+    await pool.execute(
+      'INSERT INTO carts(product_name, quantity, price, user_id, image) VALUES (?,?,?,?,?)',
+      [product_name, quantity, product_price, userId, image]
+    );
+
+    res.json({ message: "true" });
+  } catch (error) {
+    res.status(500).json({ message: "false", error: error.message });
   }
 });
 app.listen(process.env.PORT, () => {
   console.log(`✅ Server đang chạy tại http://localhost:${process.env.PORT}`);
 });
 //Xóa tất cả sản phẩm trong giỏ hàng
-app.delete('/cart/all', (req, res) => {
-  const result = pool.execute('DELETE FROM carts WHERE user_id = ?', [uid]);
-  res.json({ message: 'Xóa thành công' });
+app.delete('/cart/all', auth, async (req, res) => {
+  try {
+    const userId = req.user.sub;
+    await pool.execute(
+      'DELETE FROM carts WHERE user_id = ?',
+      [userId]
+    );
+    res.json({ message: 'Xóa thành công' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
 });
 //Xóa sản phẩm cụ thể trong giỏ hàng
-app.delete('/cart/:id', (req, res) => {
+app.delete('/cart/:id',auth, (req, res) => {
   const cartId = req.params.id;
-  const result = pool.execute('DELETE FROM carts WHERE id = ?', [cartId]);
+  const userId = req.user.sub;
+  const result = pool.execute('DELETE FROM carts WHERE id = ? AND user_id = ?', [cartId, userId]);
   res.json({ message: 'Xóa thành công' });
 });
 //Lấy thông tin tìm kiếm từ cơ sở dữ liệu
@@ -131,7 +158,7 @@ app.post('/search', async (req, res) => {
     res.status(500).json({ ok: false, error: err.message });
   }
 });
-//Lấy id giỏ hàng được chọn và trả về các sản phẩm tương ứng
+//Lấy id danh mục được chọn và trả về các sản phẩm tương ứng
 app.post('/cats', async (req, res) => {
   try {
     const id = req.body.categories_id;

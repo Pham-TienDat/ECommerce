@@ -1,5 +1,6 @@
 import {useState,useEffect} from 'react';
-import axios from 'axios';
+import api from "../../api/axios";
+import axios from "axios";
 import {useLocation,useNavigate} from "react-router-dom";
 import Header from "../Home/Header/Header"
 import DisplayRating from "../../DisplayRating"
@@ -20,7 +21,7 @@ export default function ProductDetail(){
     }
     const handleClick = () => {
         if(soLuong>0){
-        const res =  axios.post(
+        const res =  api.post(
         "http://localhost:3000/cart",
         { user_id: user_id,
         product_name: product.name,

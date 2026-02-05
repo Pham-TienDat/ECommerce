@@ -1,4 +1,4 @@
-import axios from 'axios';
+import api from "../../api/axios";
 import {useEffect,useState} from 'react';
 import { Link } from "react-router-dom";
 export default function Cart(){
@@ -8,7 +8,7 @@ const [selectAll, setSelectAll] = useState(false);
 const [count,setCount]=useState(0);
 const handleDelete = async (cartId,cost) => {
   try {
-    const res = await axios.delete(`http://localhost:3000/cart/${cartId}`);
+    const res = await api.delete(`/cart/${cartId}`);
     setCart(prev => prev.filter(item => item.id !== Number(cartId)));
     if(selectedIds.has(cartId)){
     setCount(a=>{
@@ -21,7 +21,7 @@ const handleDelete = async (cartId,cost) => {
 };
 const handleDeleteAll = async()  =>{
   try {
-    const res = await axios.delete(`http://localhost:3000/cart/all`);
+    const res = await api.delete("/cart/all");
     setCart([]);
     setCount(0);
     setSelectAll(false);
@@ -50,7 +50,7 @@ const handleSelectAll = () => {
   }
 }
 useEffect(() => {
-axios.get('http://localhost:3000/cart')
+api.get("/cart")
     .then(res => {setCart(res.data.cart);
     })
     .catch(err => console.error(err));
