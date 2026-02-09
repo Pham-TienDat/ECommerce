@@ -1,11 +1,12 @@
 import api from "../../api/axios";
 import {useEffect,useState} from 'react';
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 export default function Cart(){
 const [cart, setCart] = useState([]);
 const [selectedIds, setSelectedIds] = useState(new Set());
 const [selectAll, setSelectAll] = useState(false);
 const [count,setCount]=useState(0);
+const navigate = useNavigate();
 const handleDelete = async (cartId,cost) => {
   try {
     const res = await api.delete(`/cart/${cartId}`);
@@ -49,6 +50,25 @@ const handleSelectAll = () => {
     ))
   }
 }
+
+const handleCheckout = () => {
+  const selectedItems = cart.filter(item =>
+    selectedIds.has(item.id)
+  );
+
+  if (selectedItems.length === 0) {
+    alert("Vui lòng chọn sản phẩm để mua");
+    return;
+  }
+
+  navigate("/checkout", {
+    state: {
+      items: selectedItems
+    }
+  });
+};
+
+
 useEffect(() => {
 api.get("/cart")
     .then(res => {setCart(res.data.cart);
@@ -106,7 +126,7 @@ const handleItemSelect = (productId,cost) => {
   </div>
     <div className="d-flex fixed-bottom bg-secondary-subtle p-4 align-items-center gap-4">
       <div className="ms-auto fw-bold">Tổng cộng: {Number(count/2).toLocaleString('vi-VN')}</div>
-      <button className="btn btn-secondary">Mua hàng</button>
+      <button onClick={handleCheckout} className="btn btn-secondary">Mua hàng</button>
       <button className="btn btn-secondary" onClick={handleDeleteAll}>Xóa tất cả</button>
     </div>
     </div>)

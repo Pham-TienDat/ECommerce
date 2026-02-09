@@ -1,5 +1,4 @@
 import Header from "../Home/Header/Header";
-import axios from 'axios';
 import {ProductContext} from "../../ProductContext";
 import {useContext,useState} from 'react';
 import { Link } from "react-router-dom";

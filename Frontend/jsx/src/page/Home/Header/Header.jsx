@@ -28,11 +28,35 @@ export default function Header(){
             <Link to="/login" className="ms-auto" style={{ borderRight: '1px solid black', padding: '10px' }}>Đăng nhập</Link>
             <Link to="/signup" style={{ padding: '10px' }}>Đăng ký</Link>
           </div>)
-          :(<div className="container d-flex">
-          <span className="ms-auto">Xin chào {user} </span>
-          <a href="/">
-          <button onClick={handleLogout}> Đăng xuất </button>
-          </a>
+          :(<div className="container d-flex align-items-center">
+         <div className="nav-item dropdown ms-auto">
+  <button
+    className="btn p-0 border-0 bg-transparent"
+    data-bs-toggle="dropdown"
+    aria-expanded="false"
+  >
+    <img
+      src="src/assets/account-icon-template-vector.jpg"
+      className="rounded-circle"
+      height="45"
+      alt="account"
+    />
+  </button>
+
+  <ul className="dropdown-menu dropdown-menu-end">
+    <li><a className="dropdown-item" href="#">Thông tin tài khoản</a></li>
+    <li><Link to= "/orderhistory" className="text-decoration-none"><a className="dropdown-item">Lịch sử mua hàng</a></Link></li>
+    <li><hr className="dropdown-divider" /></li>
+    <li>
+      <a href="/" className="text-decoration-none">
+      <button className="dropdown-item" onClick={handleLogout}>
+        Đăng xuất
+      </button>
+      </a>
+    </li>
+  </ul>
+</div>
+          
           </div>)}
          
         <div className="container d-flex justify-content-between align-items-center">

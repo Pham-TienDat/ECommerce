@@ -79,7 +79,7 @@ export default function ProductDetail(){
         </div>
         </div>
         </div>
-        
+
         <div className="container">
             <div className="fs-3">Mô tả sản phẩm</div>
             <div>{product.description}</div>

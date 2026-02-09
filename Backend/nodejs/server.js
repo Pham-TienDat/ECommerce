@@ -32,10 +32,12 @@ app.get('/', async (req, res) => {
 });
 
 //Lấy thông tin người dùng từ cơ sở dữ liệu
-app.get('/users', async (req, res) => {
+app.post('/user', async (req, res) => {
   try {
-    const [rows] = await pool.execute('SELECT * FROM users');
-    res.json({ ok: true, users: rows });
+    
+    const userId = req.body.user_id;
+    const [rows] = await pool.execute('SELECT phonenumber, address, name FROM users WHERE id=?',[userId]);
+    res.json({ ok: true, user: rows});
   } catch (err) {
     res.status(500).json({ ok: false, error: err.message });
   }
@@ -71,7 +73,7 @@ app.get('/cart',auth, async (req, res) => {
 //Lấy thông tin đăng nhập từ frontend và so sánh với cơ sở dữ liệu
 app.post('/login', async(req, res) => {
   const { username, password } = req.body; // Lấy dữ liệu gửi lên
-  const [rows] = await pool.execute('SELECT id, username, password FROM users WHERE username = ?', [username]);
+  const [rows] = await pool.execute('SELECT id, username, password, name FROM users WHERE username = ?', [username]);
   if (rows.length === 0) {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
@@ -86,7 +88,8 @@ app.post('/login', async(req, res) => {
     );
     res.json({ message: "true" ,
        accessToken: token,
-       user_id: user.id});
+       user_id: user.id,
+      name: user.name});
   }
   else res.json({ message: "false" });
 });
@@ -205,5 +208,119 @@ app.get('/flashsale', async (req, res) => {
     res.json({ ok: true, flashsale: rows });
   } catch (err) {
     res.status(500).json({ ok: false, error: err.message });
+  }
+});
+
+//Xử lý đơn hàng
+app.post("/orders", auth, async (req, res) => {
+  const userId = req.user.sub; // lấy từ JWT
+  const { items, customer, total } = req.body;
+
+  if (!items || items.length === 0) {
+    return res.status(400).json({ message: "Giỏ hàng trống" });
+  }
+
+  if (!customer?.name || !customer?.phone || !customer?.address) {
+    return res.status(400).json({ message: "Thiếu thông tin khách hàng" });
+  }
+
+  const conn = await pool.getConnection();
+  try {
+    await conn.beginTransaction();
+
+    // 1. Tạo đơn hàng
+    const [orderResult] = await conn.execute(
+      `INSERT INTO orders (user_id, name, phone, address, note, total_price, status)
+       VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      [
+        userId,
+        customer.name,
+        customer.phone,
+        customer.address,
+        customer.note || "",
+        total,
+        "pending"
+      ]
+    );
+
+    const orderId = orderResult.insertId;
+
+    // 2. Lưu từng sản phẩm
+    for (const item of items) {
+      await conn.execute(
+        `INSERT INTO order_items (order_id, product_id, price, quantity,name)
+         VALUES (?, ?, ?, ?, ?)`,
+        [orderId, item.id, item.price, item.quantity, item.product_name]
+      );
+    }
+
+    // 3. Xóa giỏ hàng
+    for (const item of items){
+    await conn.execute(
+      "DELETE FROM carts WHERE user_id = ? AND id = ?",
+      [userId,item.id]
+    );
+  }
+    await conn.commit();
+
+    res.json({
+      ok: true,
+      orderId,
+      message: "Đặt hàng thành công"
+    });
+
+  } catch (err) {
+    await conn.rollback();
+    console.error(err);
+    res.status(500).json({ ok: false, message: "Lỗi tạo đơn hàng" });
+  } finally {
+    conn.release();
+  }
+});
+
+
+// Lịch sử mua hàng
+app.get("/orders", auth, async (req, res) => {
+  try {
+    const userId = req.user.sub; // 👈 lấy từ JWT
+
+    // Lấy danh sách đơn hàng
+    const [orders] = await pool.execute(
+      `
+      SELECT 
+        id,
+        total_price,
+        status,
+        date
+      FROM orders
+      WHERE user_id = ?
+      ORDER BY date DESC
+      `,
+      [userId]
+    );
+
+    // Lấy sản phẩm cho từng đơn
+    for (const order of orders) {
+      const [items] = await pool.execute(
+        `
+        SELECT *
+        FROM order_items oi
+        WHERE oi.order_id = ?
+        `,
+        [order.id]
+      );
+      order.items = items;
+    }
+
+    res.json({
+      ok: true,
+      orders
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      ok: false,
+      message: "Không thể lấy lịch sử mua hàng"
+    });
   }
 });

@@ -22,6 +22,7 @@ export default function Login(){
         setUser(username);
         localStorage.setItem("user_id",JSON.stringify(res.data.user_id));
         localStorage.setItem("username",JSON.stringify(username));
+        localStorage.setItem("fullName",res.data.name);
         localStorage.setItem("accessToken", res.data.accessToken);
         navigate(from, { replace: true });
       }
