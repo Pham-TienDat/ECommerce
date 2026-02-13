@@ -95,15 +95,16 @@ app.post('/login', async(req, res) => {
 });
 //Lấy thông tin đăng ký từ backend và ghi vào cơ sở dữ liệu
 app.post('/signup', async(req, res) => {
-  const { username, password } = req.body; // Lấy dữ liệu gửi lên
+  const { phonenumber,username, password, name } = req.body; // Lấy dữ liệu gửi lên
   try{
   const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
-  const [rows] = await pool.execute('INSERT INTO users(username,password) VALUES (?,?)', [username,passwordHash])
+  const [rows] = await pool.execute('INSERT INTO users(username,phonenumber,password,name) VALUES (?,?,?,?)', [username,phonenumber,passwordHash,name])
   res.json({ message: "true" });}
   catch(error){
     res.json({ message: "false" });
   }
 });
+
 
 //Lấy thông tin thêm đơn hàng ghi vào cơ sở dữ liệu
 app.post('/cart', auth, async (req, res) => {
@@ -211,10 +212,11 @@ app.get('/flashsale', async (req, res) => {
   }
 });
 
+
 //Xử lý đơn hàng
 app.post("/orders", auth, async (req, res) => {
   const userId = req.user.sub; // lấy từ JWT
-  const { items, customer, total } = req.body;
+  const { items, customer, total, payment_method } = req.body;
 
   if (!items || items.length === 0) {
     return res.status(400).json({ message: "Giỏ hàng trống" });
@@ -230,8 +232,8 @@ app.post("/orders", auth, async (req, res) => {
 
     // 1. Tạo đơn hàng
     const [orderResult] = await conn.execute(
-      `INSERT INTO orders (user_id, name, phone, address, note, total_price, status)
-       VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      `INSERT INTO orders (user_id, name, phone, address, note, total_price, status, payment_method)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         userId,
         customer.name,
@@ -239,7 +241,8 @@ app.post("/orders", auth, async (req, res) => {
         customer.address,
         customer.note || "",
         total,
-        "pending"
+        "pending",
+        payment_method 
       ]
     );
 
@@ -323,4 +326,135 @@ app.get("/orders", auth, async (req, res) => {
       message: "Không thể lấy lịch sử mua hàng"
     });
   }
+});
+
+
+
+
+//Gửi về thông tin từng đơn hàng
+app.get("/orders/:id", auth, async (req, res) => {
+  try {
+    const orderId = req.params.id;
+    const userId = req.user.sub;
+
+    // 1️⃣ Lấy thông tin đơn hàng (đảm bảo đúng user)
+    const [orders] = await pool.execute(
+      `
+      SELECT 
+        id,
+        total_price,
+        status,
+        date,
+        name,
+        phone,
+        address,
+        note,
+        payment_method
+      FROM orders
+      WHERE id = ? AND user_id = ?
+      `,
+      [orderId, userId]
+    );
+
+    if (orders.length === 0) {
+      return res.status(404).json({
+        ok: false,
+        message: "Không tìm thấy đơn hàng"
+      });
+    }
+
+    const order = orders[0];
+
+    // 2️⃣ Lấy danh sách sản phẩm trong đơn
+    const [items] = await pool.execute(
+      `
+      SELECT 
+        oi.id            AS order_item_id,
+        oi.quantity,
+        oi.price         AS order_price,
+        oi.name           AS product_name
+      FROM order_items oi
+      WHERE oi.order_id = ?
+      `,
+      [orderId]
+    );
+
+    // 3️⃣ Trả dữ liệu cho frontend
+    res.json({
+      ok: true,
+      order: {
+        id: order.id,
+        created_at: order.date,
+        status: order.status,
+        total_price: order.total_price,
+        payment_method: order.payment_method,
+        customer: {
+          name: order.name,
+          phone: order.phone,
+          address: order.address,
+          note: order.note
+        },
+        items
+      }
+    });
+
+  } catch (err) {
+    console.error("ORDER DETAIL ERROR:", err);
+    res.status(500).json({
+      ok: false,
+      message: "Lỗi khi lấy chi tiết đơn hàng"
+    });
+  }
+});
+
+
+//PROFILE
+app.get("/me", auth, async (req, res) => {
+  const userId = req.user.sub;
+
+  const [rows] = await pool.execute(
+    "SELECT id, email, name, phonenumber, address FROM users WHERE id = ?",
+    [userId]
+  );
+
+  res.json({ user: rows[0] });
+});
+app.put("/me", auth, async (req, res) => {
+  const userId = req.user.sub;
+  const { name, phone, address } = req.body;
+
+  await pool.execute(
+    `
+    UPDATE users
+    SET name = ?, phone = ?, address = ?
+    WHERE id = ?
+    `,
+    [name || null, phone || null, address || null, userId]
+  );
+
+  res.json({ message: "Cập nhật thành công" });
+});
+
+app.put("/me/password", auth, async (req, res) => {
+  const userId = req.user.sub;
+  const { oldPassword, newPassword } = req.body;
+
+  const [rows] = await pool.execute(
+    "SELECT password FROM users WHERE id = ?",
+    [userId]
+  );
+
+  const match = await bcrypt.compare(oldPassword, rows[0].password);
+  if (!match) {
+    return res.status(400).json({ message: "Sai mật khẩu cũ" });
+  }
+
+  const hashed = await bcrypt.hash(newPassword, 10);
+
+  await pool.execute(
+    "UPDATE users SET password = ? WHERE id = ?",
+    [hashed, userId]
+  );
+
+  res.json({ message: "Đổi mật khẩu thành công" });
 });

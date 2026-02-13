@@ -31,7 +31,8 @@ export default function ProductDetail(){
         { headers: { "Content-Type": "application/json" } }
       )
       .then(res => {
-        navigate(from, { replace: true });
+        alert("Đặt hàng thành công!✅");
+        setSoLuong(0);
   })
 }
     }

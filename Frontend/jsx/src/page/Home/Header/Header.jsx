@@ -1,4 +1,4 @@
-import logo from '../../../assets/logo.jpg'
+import bieutuong from '../../../assets/img.jpg'
 import gioHang from '../../../assets/gioHang.jpeg'
 import React from 'react'
 import "./Header.css"
@@ -36,7 +36,7 @@ export default function Header(){
     aria-expanded="false"
   >
     <img
-      src="src/assets/account-icon-template-vector.jpg"
+      src={bieutuong}
       className="rounded-circle"
       height="45"
       alt="account"
@@ -44,7 +44,7 @@ export default function Header(){
   </button>
 
   <ul className="dropdown-menu dropdown-menu-end">
-    <li><a className="dropdown-item" href="#">Thông tin tài khoản</a></li>
+    <li><Link to= "/profile" className="text-decoration-none"><a className="dropdown-item" href="#">Thông tin tài khoản</a></Link></li>
     <li><Link to= "/orderhistory" className="text-decoration-none"><a className="dropdown-item">Lịch sử mua hàng</a></Link></li>
     <li><hr className="dropdown-divider" /></li>
     <li>

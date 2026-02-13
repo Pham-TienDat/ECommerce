@@ -1,6 +1,7 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useState,useEffect } from "react";
 import api from "../api/axios";
+import muiten from '../assets/images.png'
 
 export default function Checkout() {
   const { state } = useLocation();
@@ -13,6 +14,8 @@ export default function Checkout() {
     address: "",
     note: "",
   });
+  
+  const [paymentMethod, setPaymentMethod] = useState("cod");
 
   const totalPrice = cartItems.reduce(
     (sum, item) => sum + item.price * item.quantity,
@@ -30,13 +33,19 @@ export default function Checkout() {
     }
 
     try {
-      await api.post("/orders", {
+      const res = await api.post("/orders", {
         items: cartItems,
         customer: form,
         total: totalPrice,
+        payment_method: paymentMethod,
       });
 
-      navigate("/order-success");
+      navigate("/order-success",{
+  state: {
+    orderId: res.data.orderId,
+    totalPrice: totalPrice
+  }
+});
     } catch (err) {
       alert("Đặt hàng thất bại");
     }
@@ -62,7 +71,12 @@ export default function Checkout() {
 
   return (
     <div className="container my-5">
-      <h2 className="mb-4 text-center">Xác nhận đơn hàng</h2>
+      <div className="container bg-white d-flex align-items-center p-3" >
+          <button onClick={() => navigate(-1)} className="position-relative rounded-circle border border-dark d-flex justify-content-center align-items-center" style={{ width: 45, height: 45 }}>
+          <img src={muiten} height="30" style={{ transform: "rotate(180deg)"  }}></img>
+          </button>
+          <h2 className="position-absolute start-50 translate-middle-x p-3">Xác nhận đơn hàng</h2>
+          </div>
 
       {/* THÔNG TIN NGƯỜI NHẬN */}
       <div className="card mb-4 shadow-sm">
@@ -162,6 +176,9 @@ export default function Checkout() {
     type="radio"
     name="payment"
     id="cod"
+    value="cod"
+    checked={paymentMethod === "cod"}
+    onChange={(e) => setPaymentMethod(e.target.value)}
   />
   <label className="form-check-label" htmlFor="cod">
     💵 Thanh toán khi nhận hàng
@@ -174,6 +191,9 @@ export default function Checkout() {
     type="radio"
     name="payment"
     id="bank"
+    value="bank"
+    checked={paymentMethod === "bank"}
+    onChange={(e) => setPaymentMethod(e.target.value)}
   />
   <label className="form-check-label" htmlFor="bank">
     💳 Chuyển khoản ngân hàng

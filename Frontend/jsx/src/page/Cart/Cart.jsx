@@ -1,6 +1,7 @@
 import api from "../../api/axios";
 import {useEffect,useState} from 'react';
 import { useNavigate } from "react-router-dom";
+import muiten from '../../assets/images.png'
 export default function Cart(){
 const [cart, setCart] = useState([]);
 const [selectedIds, setSelectedIds] = useState(new Set());
@@ -95,8 +96,13 @@ const handleItemSelect = (productId,cost) => {
 }; 
     return(
     <div className="container vw-100">
-    <h1 className="p-3 fixed-top bg-white">Giỏ hàng</h1>
-    {cart.length==0?(<h2 className="text-center">Không có sản phẩm</h2>):(
+    <div className="container fixed-top  bg-white d-flex align-items-center p-3" >
+    <button onClick={() => navigate(-1)} className="position-relative rounded-circle border border-dark d-flex justify-content-center align-items-center" style={{ width: 45, height: 45 }}>
+    <img src={muiten} height="30" style={{ transform: "rotate(180deg)"  }}></img>
+    </button>
+    <h1 className="position-absolute start-50 translate-middle-x p-3">Giỏ hàng</h1>
+    </div>
+    {cart.length===0?(<h2  className="text-center" style={{paddingTop: '10rem'}}>Không có sản phẩm</h2>):(
     <div>
     <div style={{paddingTop: '5rem',paddingBottom:"5rem"}}>
    <table className="table">
@@ -132,5 +138,6 @@ const handleItemSelect = (productId,cost) => {
     </div>)
 }
 </div>
+
     )
 }

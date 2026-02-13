@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
+import { useNavigate,Link } from "react-router-dom";
 import api from "../api/axios"; // axios instance
+import muiten from '../assets/images.png'
 
 export default function OrderHistory() {
   const [orders, setOrders] = useState([]);
   const userId = localStorage.getItem("user_id");
-
+  const navigate = useNavigate();
   useEffect(() => {
   api.get("/orders")
     .then(res => {
@@ -17,12 +19,19 @@ export default function OrderHistory() {
 
   return (
     <div className="container mt-4">
-      <h3 className="mb-4 text-center">Lịch sử mua hàng</h3>
+    
+      <div className="container bg-white d-flex align-items-center p-3" >
+          <button onClick={() => navigate(-1)} className="position-relative rounded-circle border border-dark d-flex justify-content-center align-items-center" style={{ width: 45, height: 45 }}>
+          <img src={muiten} height="30" style={{ transform: "rotate(180deg)"  }}></img>
+          </button>
+          <h2 className="position-absolute start-50 translate-middle-x p-3">Lịch sử mua hàng</h2>
+          </div>
 
       {orders.length === 0 ? (
         <p>Bạn chưa có đơn hàng nào.</p>
       ) : (
         orders.map(order => (
+          <Link to={`/orders/${order.id}`} style={{ textDecoration: "none" }}>
           <div key={order.id} className="card mb-3 shadow-sm">
             <div className="card-header d-flex justify-content-between">
               <div>
@@ -61,6 +70,7 @@ export default function OrderHistory() {
               ))}
             </div>
           </div>
+          </Link>
         ))
       )}
     </div>
