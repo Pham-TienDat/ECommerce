@@ -73,7 +73,7 @@ app.get('/cart',auth, async (req, res) => {
 //Lấy thông tin đăng nhập từ frontend và so sánh với cơ sở dữ liệu
 app.post('/login', async(req, res) => {
   const { username, password } = req.body; // Lấy dữ liệu gửi lên
-  const [rows] = await pool.execute('SELECT id, username, password, name FROM users WHERE username = ?', [username]);
+  const [rows] = await pool.execute('SELECT id, username, password, name, role FROM users WHERE username = ?', [username]);
   if (rows.length === 0) {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
@@ -87,9 +87,10 @@ app.post('/login', async(req, res) => {
       { expiresIn: process.env.JWT_EXPIRE }
     );
     res.json({ message: "true" ,
-       accessToken: token,
-       user_id: user.id,
-      name: user.name});
+      accessToken: token,
+      user_id: user.id,
+      name: user.name,
+      role:user.role});
   }
   else res.json({ message: "false" });
 });

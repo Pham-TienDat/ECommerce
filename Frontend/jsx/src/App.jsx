@@ -9,6 +9,12 @@ import OrderHistory from './page/OrderHistory'
 import OrderSuccess from './page/OrderSuccess'
 import OrderDetail from './page/OrderDetail'
 import Profile from './page/Profile'
+import AdminLayout from './admin/AdminLayout'
+import AdminDashboard from './admin/AdminDashboard'
+import AdminProducts from './admin/AdminProducts'
+import AdminUsers from './admin/AdminUsers'
+import AdminOrders from './admin/AdminOrders'
+import AdminProductForm from './admin/AdminProductForm'
 import { AuthProvider } from "./AuthContext";
 import { Routes, Route } from "react-router-dom";
 function App() {
@@ -27,6 +33,13 @@ function App() {
         <Route path="/order-success" element={<OrderSuccess />} />
         <Route path="/orders/:id" element={<OrderDetail />} />
         <Route path="/profile" element={<Profile/>} />
+        <Route path="/admin/*" element={<AdminLayout />} >
+          <Route index element={<AdminDashboard />} />
+          <Route path="products" element={<AdminProducts />} />
+          <Route path="products/create" element={<AdminProductForm />} />
+          <Route path="orders" element={<AdminOrders/>} />
+          <Route path="users" element={<AdminUsers />} />
+        </Route>
       </Routes>
     </AuthProvider>
     </>

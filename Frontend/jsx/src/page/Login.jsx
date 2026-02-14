@@ -24,7 +24,11 @@ export default function Login(){
         localStorage.setItem("username",JSON.stringify(username));
         localStorage.setItem("fullName",res.data.name);
         localStorage.setItem("accessToken", res.data.accessToken);
-        navigate(from, { replace: true });
+        if(res.data.role==="admin"){
+          navigate("/admin");
+        }
+        else{
+        navigate(from, { replace: true });}
       }
       else setResult("Sai tài khoản hoặc mật khẩu");
     }
