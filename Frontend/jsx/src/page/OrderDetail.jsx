@@ -91,28 +91,48 @@ export default function OrderDetail() {
   </div>
 
   {/* DANH SÁCH SẢN PHẨM */}
-  <div className="card">
-    <div className="card-header fw-bold">Sản phẩm</div>
+<div className="card">
+  <div className="card-header fw-bold">Sản phẩm</div>
 
-    <div className="card-body">
-      {order.items.map(item => (
-        <div
-          key={item.order_item_id}
-          className="d-flex align-items-center mb-3 border-bottom pb-3"
-        >
-          <div className="flex-grow-1">
-            <div className="fw-semibold">{item.product_name}</div>
-            <small className="text-muted">
-              {item.quantity} × {item.order_price.toLocaleString()} ₫
-            </small>
-          </div>
+  <div className="card-body">
+    {order.items.map(item => (
+      <div
+        key={item.order_item_id}
+        className="d-flex justify-content-between align-items-center mb-3 border-bottom pb-3"
+      >
+        <div className="flex-grow-1">
+          <div className="fw-semibold">{item.product_name}</div>
+          <small className="text-muted">
+            {item.quantity} × {item.order_price.toLocaleString()} ₫
+          </small>
+        </div>
 
-          <div className="fw-bold text-danger">
+        <div className="text-end">
+          <div className="fw-bold text-danger mb-2">
             {(item.quantity * item.order_price).toLocaleString()} ₫
           </div>
+
+          {/* NÚT ĐÁNH GIÁ */}
+          {order.status?.toLowerCase().trim() === "completed" && (
+            <button
+              className="btn btn-outline-primary btn-sm"
+              onClick={() =>
+                navigate(`/product-review/${item.product_id}`, {
+                  state: {
+                    orderId: order.id,
+                    orderItemId: item.order_item_id,
+                    productId: item.product_id
+                  }
+                })
+              }
+            >
+              Đánh giá
+            </button>
+          )}
         </div>
-      ))}
-    </div>
+      </div>
+    ))}
+  </div>
 
     {/* TỔNG TIỀN */}
     <div className="card-footer">

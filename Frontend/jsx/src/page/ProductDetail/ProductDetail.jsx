@@ -27,11 +27,12 @@ export default function ProductDetail(){
         product_name: product.name,
         product_price: product.price,
         quantity: soLuong,
-        image: product.image},
+        image: product.image,
+        product_id: product.id},
         { headers: { "Content-Type": "application/json" } }
       )
       .then(res => {
-        alert("Đặt hàng thành công!✅");
+        alert("Thêm vào giỏ hàng thành công!✅");
         setSoLuong(0);
   })
 }
@@ -88,7 +89,6 @@ export default function ProductDetail(){
 
         <div className="container">
             <div className="fs-3">Đánh giá</div>
-            <div className="pb-4"><ProductReviewForm productId={product.id} userId={user_id}/></div>
             <div>{rate.map(p=>(
                 <div key={p.id} className="border-bottom mb-1">
                     <div>Khách hàng số {p.user_id}</div>

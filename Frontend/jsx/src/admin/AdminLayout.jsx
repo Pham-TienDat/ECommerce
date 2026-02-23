@@ -30,11 +30,6 @@ export default function AdminLayout() {
             </Link>
           </li>
 
-          <li className="nav-item mb-2">
-            <Link to="/admin/users" className="nav-link text-white">
-              Users
-            </Link>
-          </li>
         </ul>
       </div>
 

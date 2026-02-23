@@ -77,23 +77,24 @@ api.get("/cart")
     .catch(err => console.error(err));
 }, []);
 
-const handleItemSelect = (productId,cost) => {
+const handleItemSelect = (pId,cost) => {
     setSelectedIds(prevSelectedIds => {
         const newSet = new Set(prevSelectedIds); 
-        if(!newSet.has(productId)){
-        newSet.add(productId);
+        if(!newSet.has(pId)){
+        newSet.add(pId);
         setCount(a=>{
           return a+cost
         })}
         else 
         { setSelectAll(false);
-          newSet.delete(productId)
+          newSet.delete(pId)
           setCount(a=>{
           return a-cost
         })}; 
         return newSet;
     });
 }; 
+
     return(
     <div className="container vw-100">
     <div className="container fixed-top  bg-white d-flex align-items-center p-3" >

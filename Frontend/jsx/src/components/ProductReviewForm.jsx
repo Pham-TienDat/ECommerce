@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
+import {Link} from 'react-router-dom';
 import axios from 'axios';
-// Một component đơn giản cho một ngôi sao (star)
 const Star = ({ selected, onClick }) => (
   <span
     style={{
@@ -45,6 +45,9 @@ const ProductReviewForm = ({productId,userId}) => {
     return (
       <div style={{ padding: '20px', border: '1px solid #4CAF50', borderRadius: '8px', backgroundColor: '#E8F5E9' }}>
         <h3>✅ Cảm ơn bạn đã đánh giá!</h3>
+        <Link to="/" className="btn btn-outline-secondary">
+            Tiếp tục mua sắm
+        </Link>
       </div>
     );
   }
